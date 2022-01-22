@@ -1185,11 +1185,11 @@ contract ve is IERC721, IERC721Enumerable, IERC721Metadata {
 
         uint256 max_epoch = epoch;
         uint256 _epoch = find_block_epoch(_block, max_epoch);
-        Point memory point_0 = point_history[_epoch];
+        Point storage point_0 = point_history[_epoch];
         uint256 d_block = 0;
         uint256 d_t = 0;
         if (_epoch < max_epoch) {
-            Point memory point_1 = point_history[_epoch + 1];
+            Point storage point_1 = point_history[_epoch + 1];
             d_block = point_1.blk - point_0.blk;
             d_t = point_1.ts - point_0.ts;
         } else {
