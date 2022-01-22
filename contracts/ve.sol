@@ -846,20 +846,22 @@ contract ve is IERC721, IERC721Enumerable, IERC721Metadata {
         if (_epoch > 0) {
             last_point = point_history[_epoch];
         }
-        uint256 last_checkpoint = last_point.ts;
-        // initial_last_point is used for extrapolation to calculate block number
-        // (approximately, for *At methods) and save them
-        // as we cannot figure that out exactly from inside the contract
-        Point memory initial_last_point = last_point;
-        uint256 block_slope = 0; // dblock/dt
-        if (block.timestamp > last_point.ts) {
-            block_slope = (MULTIPLIER * (block.number - last_point.blk)) / (block.timestamp - last_point.ts);
-        }
-        // If last point is already recorded in this block, slope=0
-        // But that's ok b/c we know the block in such case
 
-        // Go over weeks to fill history and calculate what the current point is
+        // Extra scope needed for stack too deep error.
         {
+            uint256 last_checkpoint = last_point.ts;
+            // initial_last_point is used for extrapolation to calculate block number
+            // (approximately, for *At methods) and save them
+            // as we cannot figure that out exactly from inside the contract
+            Point memory initial_last_point = last_point;
+            uint256 block_slope = 0; // dblock/dt
+            if (block.timestamp > last_point.ts) {
+                block_slope = (MULTIPLIER * (block.number - last_point.blk)) / (block.timestamp - last_point.ts);
+            }
+            // If last point is already recorded in this block, slope=0
+            // But that's ok b/c we know the block in such case
+
+            // Go over weeks to fill history and calculate what the current point is
             uint256 t_i = (last_checkpoint / WEEK) * WEEK;
             for (uint256 i = 0; i < 255; ++i) {
                 // Hopefully it won't happen that this won't get used in 5 years!
