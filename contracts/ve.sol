@@ -694,17 +694,6 @@ contract ve is IERC721, IERC721Enumerable, IERC721Metadata {
         _transferFrom(_from, _to, _tokenId, msg.sender);
     }
 
-    function isContract(address account) internal view returns (bool) {
-        // This method relies on extcodesize, which returns 0 for contracts in
-        // construction, since the code is only stored at the end of the
-        // constructor execution.
-        uint256 size;
-        assembly {
-            size := extcodesize(account)
-        }
-        return size > 0;
-    }
-
     /// @dev Transfers the ownership of an NFT from one address to another address.
     ///      Throws unless `msg.sender` is the current owner, an authorized operator, or the
     ///      approved address for this NFT.
@@ -1279,5 +1268,15 @@ contract ve is IERC721, IERC721Enumerable, IERC721Metadata {
         }
         // Now dt contains info on how far are we beyond point
         return supply_at(point, point.ts + dt);
+    }
+
+    /// @dev This method relies on extcodesize, which returns 0 for contracts in
+    ///      construction, since the code is only stored at the end of the constructor execution.
+    function isContract(address account) private view returns (bool) {
+        uint256 size;
+        assembly {
+            size := extcodesize(account)
+        }
+        return size > 0;
     }
 }
